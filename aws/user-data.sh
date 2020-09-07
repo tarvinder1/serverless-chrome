@@ -37,9 +37,9 @@ service awslogs start
 # Go time (if brower and release channel are set.)
 #
 if [ -n "$CHANNEL" ] && [ -n "$BROWSER" ]; then
-  yum update -y --quiet
+  yum update -y 
 
-  yum install -y --quiet docker jq git
+  yum install -y  docker jq git
 
   service docker start
 
@@ -49,23 +49,23 @@ if [ -n "$CHANNEL" ] && [ -n "$BROWSER" ]; then
     jq -r ".region" \
   )
 
-  DOCKER_USER=$(aws ssm get-parameter \
-    --region "$AWS_REGION" \
-    --with-decryption \
-    --name /serverless-chrome-automation/DOCKER_USER | \
-    jq -r ".Parameter.Value" \
-  )
-
-  DOCKER_PASS=$(aws ssm get-parameter \
-    --region "$AWS_REGION" \
-    --with-decryption \
-    --name /serverless-chrome-automation/DOCKER_PASS | \
-    jq -r ".Parameter.Value" \
-  )
+#  DOCKER_USER=$(aws ssm get-parameter \
+#    --region "$AWS_REGION" \
+#    --with-decryption \
+#    --name /serverless-chrome-automation/DOCKER_USER | \
+#    jq -r ".Parameter.Value" \
+#  )
+# 
+  # DOCKER_PASS=$(aws ssm get-parameter \
+    # --region "$AWS_REGION" \
+    # --with-decryption \
+    # --name /serverless-chrome-automation/DOCKER_PASS | \
+    # jq -r ".Parameter.Value" \
+  # )
 
   export AWS_REGION
-  export DOCKER_USER
-  export DOCKER_PASS
+#  export DOCKER_USER
+#  export DOCKER_PASS
   export DOCKER_ORG
   export S3_BUCKET
   export FORCE_NEW_BUILD
@@ -88,4 +88,4 @@ echo "User-data script completed. Shutting down instance.."
 uptime
 
 # Don't shut down immediately so that CloudWatch Agent has time to push logs to AWS
-shutdown -h -t 10 +1
+shutdown -h -t 60 +1

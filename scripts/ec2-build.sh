@@ -12,7 +12,7 @@
 # https://github.com/adieuadieu/serverless-chrome/blob/develop/docs/chrome.md
 #
 
-set -e
+set -ex
 
 cd "$(dirname "$0")/.."
 
@@ -54,21 +54,31 @@ USER_DATA=$(sed -e "s/INSERT_CHANNEL_HERE/$CHANNEL/g" "$PROJECT_DIRECTORY/aws/us
   base64 \
 )
 
+echo "$USER_DATA" > userdata.txt
+
 #
 # Setup JSON payload which sets/configures the AWS CLI command
 #
+#JSON=$(jq -c -r \
+#  ".LaunchSpecification.UserData |= \"$USER_DATA\" | .LaunchSpecification.IamInstanceProfile.Arn |= \"$AWS_IAM_INSTANCE_ARN\"" \
+#  "$PROJECT_DIRECTORY/aws/ec2-spot-instance-specification.json"
+#)
+
 JSON=$(jq -c -r \
-  ".LaunchSpecification.UserData |= \"$USER_DATA\" | .LaunchSpecification.IamInstanceProfile.Arn |= \"$AWS_IAM_INSTANCE_ARN\"" \
-  "$PROJECT_DIRECTORY/aws/ec2-spot-instance-specification.json"
+  ".UserData |= \"$USER_DATA\" | .IamInstanceProfile.Arn |= \"$AWS_IAM_INSTANCE_ARN\"" \
+  "$PROJECT_DIRECTORY/aws/ec2-instance-specification.json"
 )
+
 
 #
 # Request the spot instance / launch
 # ref: http://docs.aws.amazon.com/cli/latest/reference/ec2/request-spot-instances.html
 # --valid-until "2018-08-22T00:00:00.000Z" \
 # 
-aws ec2 request-spot-instances \
-  --region "$AWS_REGION" \
-  --valid-until "$(date -u +%FT%T.000Z -d '6 hours')" \
-  --cli-input-json "$JSON" | \
-  jq -r ".SpotInstanceRequests[].Status"
+# aws ec2 request-spot-instances \
+#   --region "$AWS_REGION" \
+#   --valid-until "$(date -u +%FT%T.000Z -d '3 hours')" \
+#   --cli-input-json "$JSON" | \
+#   jq -r ".SpotInstanceRequests[].Status"
+
+ aws ec2 run-instances --region "$AWS_REGION" --cli-input-json "$JSON"

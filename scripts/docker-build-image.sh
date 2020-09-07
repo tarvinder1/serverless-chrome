@@ -91,22 +91,22 @@ build() {
       --build-arg VERSION="$VERSION" \
       "."
 
-    if [ -n "$DO_PUSH" ]; then
-      echo "Pushing image to Docker hub"
-
-      # Only tag stable channel as latest
-      if [ "$CHANNEL" = "stable" ]; then
-        docker tag \
-          "$DOCKER_ORG/$DOCKER_IMAGE:$VERSION" \
-          "$DOCKER_ORG/$DOCKER_IMAGE:latest"
-      fi
-
-      docker tag \
-        "$DOCKER_ORG/$DOCKER_IMAGE:$VERSION" \
-        "$DOCKER_ORG/$DOCKER_IMAGE:$CHANNEL"
-
-      docker push "$DOCKER_ORG/$DOCKER_IMAGE"
-    fi
+    # if [ -n "$DO_PUSH" ]; then
+      # echo "Pushing image to Docker hub"
+# 
+      # # Only tag stable channel as latest
+      # if [ "$CHANNEL" = "stable" ]; then
+        # docker tag \
+          # "$DOCKER_ORG/$DOCKER_IMAGE:$VERSION" \
+          # "$DOCKER_ORG/$DOCKER_IMAGE:latest"
+      # fi
+# 
+      # docker tag \
+        # "$DOCKER_ORG/$DOCKER_IMAGE:$VERSION" \
+        # "$DOCKER_ORG/$DOCKER_IMAGE:$CHANNEL"
+# 
+      # docker push "$DOCKER_ORG/$DOCKER_IMAGE"
+    # fi
 
     #
     # Upload a zipped binary to S3 if S3_BUCKET is set
@@ -142,9 +142,9 @@ build() {
 cd "$PROJECT_DIRECTORY"
 
 # Docker Login & enable docker push on successful login
-if scripts/docker-login.sh; then
-  DO_PUSH=1
-fi
+#if scripts/docker-login.sh; then
+#  DO_PUSH=1
+#fi
 
 if [ ! -z "$BROWSER" ]; then
   build "$BROWSER"

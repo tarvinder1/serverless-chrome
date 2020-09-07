@@ -1,24 +1,40 @@
 {
-  "SpotPrice": "0.34",
-  "InstanceCount": 1,
-  "Type": "one-time",
-  "LaunchSpecification": {
-    "ImageId": "ami-8c1be5f6",
-    "InstanceType": "c4.2xlarge",
-    "IamInstanceProfile": {
-      "Arn": "this gets updated by the ec2-build.sh script"
-    },
     "BlockDeviceMappings": [
-      {
-        "DeviceName": "/dev/xvda",
-        "Ebs": {
-          "DeleteOnTermination": true,
-          "VolumeType": "gp2",
-          "VolumeSize": 64,
-          "SnapshotId": "snap-080eb3cb2eda29974"
+        {
+            "DeviceName": "/dev/xvda",
+            "Ebs": {
+                "DeleteOnTermination": true,
+                "VolumeSize": 100,
+                "VolumeType": "gp2"
+            }
         }
-      }
     ],
-    "UserData": ""
-  }
+    "ImageId": "ami-8c1be5f6",
+    "InstanceType": "c5.18xlarge",
+    "KeyName": "ts-sapp",
+    "Monitoring": {
+        "Enabled": true
+    },
+    "SecurityGroupIds": [
+        "sg-005731e7a9132a78c"
+    ],
+    "SubnetId": "subnet-821dc1a9",
+    "UserData": "",
+    "EbsOptimized": true,
+    "IamInstanceProfile": {
+        "Arn": ""
+    },
+    "InstanceInitiatedShutdownBehavior": "terminate",
+
+    "TagSpecifications": [
+        {
+            "ResourceType": "instance",
+            "Tags": [
+                {
+                    "Key": "Name",
+                    "Value": "serverless-chrome-builder"
+                }
+            ]
+        }
+    ]
 }
